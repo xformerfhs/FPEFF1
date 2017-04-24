@@ -1,6 +1,28 @@
 # FPEFF1
 Visual Basic .Net class for the format preserving encryption algorithm FF1 as specified in [NIST Special Publication 800-38G (March 2016)](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38G.pdf "NIST SP 800-38G").
 
+## Format Preserving Encryption
+[Format preserving encryption](https://en.wikipedia.org/wiki/Format-preserving_encryption "FPE") is an cryptographic method to encrypt and decrypt data in such a way that the encrypted data is in the same format as the original data. I.e. if the original data are 16-digit credit card numbers then the encrypted data are 16-digit data, as well. This way one can encrypt data even for systems that do not know how to handle encrypted data.
+
+This form of encryption is not restricted to numbers. One could also use texts. However, before the encryption a mapping from the letters to the numbers has to be done. After the encryption there has to be a mapping from the numbers back to the letters. Here is an example that maps the characters to numbers:
+
+      <=> 0 Note: This means, blank is mapped to 0
+    A <=> 1
+    B <=> 2
+    ...
+    Z <=> 26
+    
+If one has the text "HOWDY THERE HOW ARE YOU" it would first be converted to the following numbers:
+
+    8,15,23,4,25,0,20,8,5,18,5,0,8,15,23,0,1,18,5,0,25,15,21
+    
+This is then encrypted with a certain key and a certain tweak to
+
+    21,14,10,3,20,20,8,14,20,18,13,1,3,24,2,2,2,22,6,20,3,22,24
+    
+which is then mapped to the text "UNJCTTHNTRMACXBBBVFTCVX".
+
+## Usage
 This project contains a shared class "FF1" that implements the algorithm mentioned above. Additionally it contains a simple command line program to interface to the FF1 class. There are also various unit tests included.
 
 The command line program can be used like this:
