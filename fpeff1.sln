@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 14 for Windows Desktop
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "fpeff1", "fpeff1\fpeff1.vbproj", "{FB43E56D-E854-4BE5-B06B-0158A39AA2F3}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "fpeff1Test", "fpeff1Test\fpeff1Test.vbproj", "{99A56A6B-4FDA-4D77-BF85-B5B3D9A0C9F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FB43E56D-E854-4BE5-B06B-0158A39AA2F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB43E56D-E854-4BE5-B06B-0158A39AA2F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB43E56D-E854-4BE5-B06B-0158A39AA2F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB43E56D-E854-4BE5-B06B-0158A39AA2F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99A56A6B-4FDA-4D77-BF85-B5B3D9A0C9F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99A56A6B-4FDA-4D77-BF85-B5B3D9A0C9F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99A56A6B-4FDA-4D77-BF85-B5B3D9A0C9F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99A56A6B-4FDA-4D77-BF85-B5B3D9A0C9F6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

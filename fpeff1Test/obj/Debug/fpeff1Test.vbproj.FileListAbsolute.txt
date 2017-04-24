@@ -1,0 +1,12 @@
+D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1Test\bin\Debug\fpeff1Test.dll
+D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1Test\bin\Debug\fpeff1Test.pdb
+D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1Test\bin\Debug\fpeff1Test.xml
+D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1Test\bin\Debug\fpeff1.exe
+D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1Test\bin\Debug\fpeff1.pdb
+D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1Test\bin\Debug\fpeff1.xml
+D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1Test\obj\Debug\fpeff1Test.vbprojResolveAssemblyReference.cache
+D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1Test\obj\Debug\fpeff1Test.Resources.resources
+D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1Test\obj\Debug\fpeff1Test.vbproj.GenerateResource.Cache
+D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1Test\obj\Debug\fpeff1Test.dll
+D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1Test\obj\Debug\fpeff1Test.xml
+D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1Test\obj\Debug\fpeff1Test.pdb
