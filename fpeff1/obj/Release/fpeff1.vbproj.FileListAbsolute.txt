@@ -1,9 +1,0 @@
-D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1\bin\Release\fpeff1.exe.config
-D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1\bin\Release\fpeff1.exe
-D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1\bin\Release\fpeff1.pdb
-D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1\bin\Release\fpeff1.xml
-D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1\obj\Release\fpeff1.Resources.resources
-D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1\obj\Release\fpeff1.vbproj.GenerateResource.Cache
-D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1\obj\Release\fpeff1.exe
-D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1\obj\Release\fpeff1.xml
-D:\Users\frankschwab\Documents\Visual Studio 2015\Projects\fpeff1\fpeff1\obj\Release\fpeff1.pdb
