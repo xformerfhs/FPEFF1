@@ -40,7 +40,7 @@
 '''
 '''      Dim decryptedData() As UShort
 '''      
-'''      decryptedData = FF1.encrypt(encryptedData, 10, key, tweak)
+'''      decryptedData = FF1.decrypt(encryptedData, 10, key, tweak)
 ''' </code>
 ''' </remarks>
 Public Class FF1
