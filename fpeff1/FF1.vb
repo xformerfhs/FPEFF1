@@ -41,16 +41,17 @@
 '''
 '''      Dim decryptedData() As UShort
 '''      
-'''      decryptedData = FF1.encrypt(encryptedData, 10, key, tweak)
+'''      decryptedData = FF1.decrypt(encryptedData, 10, key, tweak)
 ''' </code>
 ''' </remarks>
 Public Class FF1
    '
    ' Private constants
    '
-
+#Region "Private constants"
    ' Minimum domain size according to NIST SP 800-38G REV. 1
    Private Const MINIMUM_DOMAIN_SIZE As Double = 1000000
+#End Region
 
    '
    ' Private methods
