@@ -24,9 +24,10 @@
 ''' OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY Of SUCH DAMAGE.
 '''
 ''' Author: Frank Schwab, DB Systel GmbH
-''' Version: 1.0.0
+''' Version: 1.0.1
 ''' History:
 '''    2017-04-24 Created.
+'''    2019-10-25 Bump up minimum domain size according to NIST SP 800-38G REV. 1.
 '''    
 ''' Usage:
 ''' <code>
@@ -40,10 +41,17 @@
 '''
 '''      Dim decryptedData() As UShort
 '''      
-'''      decryptedData = FF1.decrypt(encryptedData, 10, key, tweak)
+'''      decryptedData = FF1.encrypt(encryptedData, 10, key, tweak)
 ''' </code>
 ''' </remarks>
 Public Class FF1
+   '
+   ' Private constants
+   '
+
+   ' Minimum domain size according to NIST SP 800-38G REV. 1
+   Private Const MINIMUM_DOMAIN_SIZE As Double = 1000000
+
    '
    ' Private methods
    '
@@ -233,7 +241,7 @@ Public Class FF1
       '
       p = initializeP(sourceLength, radix, leftLength, tweakLength)   ' This is a constant that is only computed once
 
-      q = initializeQ(tweak, tweakLength, maxPartNumberByteLength) ' This part of q never changes, so it is computes only once
+      q = initializeQ(tweak, tweakLength, maxPartNumberByteLength) ' This part of q never changes, so it is computed only once
 
       '
       ' Initialize the crypto functions
@@ -308,11 +316,7 @@ Public Class FF1
          Throw New ArgumentException("Source length is longer than or equal to 2^32 elements")
       End If
 
-      Dim minLength As UInteger = 2
-
-      If radix < 10 Then
-         minLength = Math.Ceiling(Math.Log(100) / Math.Log(radix))
-      End If
+      Dim minLength As UInteger = Math.Ceiling(Math.Log(MINIMUM_DOMAIN_SIZE) / Math.Log(radix))
 
       If source.Length < minLength Then
          Throw New ArgumentException("Source is too short for radix. Minimum length is " & FormatNumber(minLength, 0))
