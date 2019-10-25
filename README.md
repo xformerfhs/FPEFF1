@@ -40,7 +40,10 @@ The decryption would be
 which should yield
 
     0,1,2,3,4,5,6,7,8,9
-    
+
+## Caveat
+According to [this article](https://link.springer.com/chapter/10.1007%2F978-3-319-96884-1_8 "The Curse of Small Domains") the length of the data must be at least 6 numbers, i.e. the domain size has to be at least one million elements.
+
 ## Contributing
 Feel free to submit a pull request with new features, improvements on tests or documentation and bug fixes.
 
