@@ -12,7 +12,7 @@ Module ByteExtensions
    <Extension>
    Public Function NewWithReversedOrder(ByRef sourceArray() As Byte) As Byte()
       Dim resultLength As UInteger = sourceArray.Length
-      Dim result(0 To resultLength - 1) As Byte
+      Dim result As Byte() = New Byte(0 To resultLength - 1) {}
 
       Dim destinationIndex As UInteger = resultLength
 
@@ -40,7 +40,7 @@ Module ByteExtensions
    <Extension>
    Public Function NewWithReversedOrder(ByRef sourceArray() As Byte, ByVal minLength As UInteger) As Byte()
       Dim resultLength As UInteger = Math.Max(sourceArray.Length, minLength)
-      Dim result(0 To resultLength - 1) As Byte
+      Dim result As Byte() = New Byte(0 To resultLength - 1) {}
 
       Dim copyLength As UInteger = Math.Min(resultLength, sourceArray.Length)
 
@@ -64,13 +64,14 @@ Module ByteExtensions
    ''' the resulting <c>Byte</c> array is a positive number.
    ''' </summary>
    ''' <param name="sourceArray">Source Byte array</param>
-   ''' <param name="resultLength">Length of the resulting Byte array</param>
-   ''' <returns>New <c>Byte</c> array with reversed elements and an additional <c>&amp;H00</c> byte at the highest index. Note that the result has one more element than specified by <paramref name="resultLength"/></returns>
+   ''' <param name="sourceLength">Length of the source byte array</param>
+   ''' <returns>New <c>Byte</c> array with reversed elements and an additional <c>&amp;H00</c> byte at the highest index.
+   ''' Note that the result has one more element than specified by <paramref name="sourceLength"/></returns>
    <Extension>
-   Public Function ReverseWithUnsignedExtension(ByRef sourceArray() As Byte, ByVal resultLength As UInteger) As Byte()
-      Dim result(0 To resultLength) As Byte
+   Public Function ReverseWithUnsignedExtension(ByRef sourceArray() As Byte, ByVal sourceLength As UInteger) As Byte()
+      Dim result As Byte() = New Byte(0 To sourceLength) {}
 
-      Dim copyLength As UInteger = Math.Min(resultLength, sourceArray.Length)
+      Dim copyLength As UInteger = Math.Min(sourceLength, sourceArray.Length)
 
       Dim destinationIndex As UInteger = copyLength
 
@@ -100,7 +101,7 @@ Module ByteExtensions
    ''' <returns>New <c>Byte</c> array with the XOR-ed values of the parameter elements</returns>
    <Extension>
    Public Function XorValues(ByRef firstArray() As Byte, ByRef secondArray() As Byte) As Byte()
-      Dim result(0 To firstArray.Length - 1) As Byte
+      Dim result As Byte() = New Byte(0 To firstArray.Length - 1) {}
       Dim copyLength As UInteger = Math.Min(firstArray.Length, secondArray.Length)
 
       Dim i As UInteger
@@ -132,10 +133,8 @@ Module ByteExtensions
    ''' <returns>New <c>Byte</c> array with the XOR-ed values of the parameter elements</returns>
    <Extension>
    Public Function XorValues(ByRef firstArray() As Byte, ByRef secondArray() As Byte, ByVal secondArrayStartIndex As UInteger) As Byte()
-      Dim result(0 To firstArray.Length - 1) As Byte
+      Dim result As Byte() = New Byte(0 To firstArray.Length - 1) {}
       Dim copyLength As UInteger = Math.Max(0, Math.Min(firstArray.Length, secondArray.Length - secondArrayStartIndex))
-
-      Dim secondArrayIndex As UInteger = secondArrayStartIndex
 
       Dim i As UInteger = 0
 
@@ -152,5 +151,4 @@ Module ByteExtensions
 
       Return result
    End Function
-
 End Module

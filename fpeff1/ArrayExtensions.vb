@@ -38,5 +38,4 @@ Module ArrayExtensions
 
       Return result
    End Function
-
 End Module

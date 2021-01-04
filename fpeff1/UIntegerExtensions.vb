@@ -11,8 +11,8 @@ Module UIntegerExtensions
    ''' <returns>Bytes of <paramref name="fromInteger"/> in Big Endian order (2 Bytes)</returns>
    <Extension>
    Public Function GetBigEndianBytes(ByRef fromInteger As UInteger) As Byte()
-      Dim result(0 To 3) As Byte
-      Dim tempArray() As Byte
+      Dim result As Byte() = New Byte(0 To 3) {}
+      Dim tempArray As Byte()
 
       tempArray = BitConverter.GetBytes(fromInteger)
 
@@ -37,8 +37,8 @@ Module UIntegerExtensions
    ''' <returns>Bytes of <paramref name="fromInteger"/> in Big Endian order with length <paramref name="resultLength"/></returns>
    <Extension>
    Public Function GetBigEndianBytes(ByRef fromInteger As UInteger, ByVal resultLength As UInteger) As Byte()
-      Dim result(0 To resultLength - 1) As Byte
-      Dim tempArray() As Byte
+      Dim result As Byte() = New Byte(0 To resultLength - 1) {}
+      Dim tempArray As Byte()
 
       tempArray = BitConverter.GetBytes(fromInteger)
 

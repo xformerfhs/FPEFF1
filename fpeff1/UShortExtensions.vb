@@ -16,8 +16,8 @@ Module UShortExtensions
    ''' <param name="secondArray">Second <c>UShort</c> array</param>
    ''' <returns>New <c>UShort</c> array with the XOR-ed values of the parameter elements</returns>
    <Extension>
-   Public Function XorValues(ByRef firstArray() As UShort, ByRef secondArray() As UShort) As UShort()
-      Dim result(0 To firstArray.Length - 1) As UShort
+   Public Function XorValues(ByRef firstArray As UShort(), ByRef secondArray As UShort()) As UShort()
+      Dim result As UShort() = New UShort(0 To firstArray.Length - 1) {}
       Dim copyLength As UInteger = Math.Min(firstArray.Length, secondArray.Length)
 
       Dim i As UInteger
@@ -48,11 +48,9 @@ Module UShortExtensions
    ''' <param name="secondArrayStartIndex">Start index in the second array</param>
    ''' <returns>New <c>UShort</c> array with the XOR-ed values of the parameter elements</returns>
    <Extension>
-   Public Function XorValues(ByRef firstArray() As UShort, ByRef secondArray() As UShort, ByVal secondArrayStartIndex As UInteger) As UShort()
-      Dim result(0 To firstArray.Length) As UShort
+   Public Function XorValues(ByRef firstArray As UShort(), ByRef secondArray As UShort(), ByVal secondArrayStartIndex As UInteger) As UShort()
+      Dim result As UShort() = New UShort(0 To firstArray.Length - 1) {}
       Dim copyLength As UInteger = Math.Max(0, Math.Min(firstArray.Length, secondArray.Length - secondArrayStartIndex))
-
-      Dim secondArrayIndex As UInteger = secondArrayStartIndex
 
       Dim i As UInteger = 0
 
@@ -81,7 +79,7 @@ Module UShortExtensions
    ''' <param name="radix">Radix of the numbers in the array</param>
    ''' <returns><c>BigInteger</c> that is created from the "digits" in the <c>UShort</c> array</returns>
    <Extension>
-   Public Function ToBigIntegerWithRadix(ByRef anUShortArray() As UShort, ByVal radix As UInteger) As Numerics.BigInteger
+   Public Function ToBigIntegerWithRadix(ByRef anUShortArray As UShort(), ByVal radix As UInteger) As Numerics.BigInteger
       Dim result As Numerics.BigInteger = Numerics.BigInteger.Zero
 
       For i As UInteger = 0 To anUShortArray.Length - 1
@@ -97,12 +95,13 @@ Module UShortExtensions
    ''' </summary>
    ''' <param name="sourceArray">Source array</param>
    ''' <param name="startIndex">Start index of the data to be copied</param>
+   ''' <param name="resultLength">Result length</param>
    ''' <param name="radix">Radix of the digits</param>
    ''' <returns>New <c>UShort</c> array with the data copied from the source array as specified and each "digit" guaranteed to be valid</returns>
    <Extension>
-   Public Function NewFromPartWithCheckForRadix(ByRef sourceArray() As UShort, ByVal startIndex As UInteger, ByVal resultLength As UInteger, ByVal radix As UInteger) As UShort()
+   Public Function NewFromPartWithCheckForRadix(ByRef sourceArray As UShort(), ByVal startIndex As UInteger, ByVal resultLength As UInteger, ByVal radix As UInteger) As UShort()
       Dim copyLength As UInteger = Math.Max(0, Math.Min(sourceArray.Length - startIndex, resultLength))
-      Dim result(0 To resultLength - 1) As UShort
+      Dim result As UShort() = New UShort(0 To resultLength - 1) {}
 
       Dim sourceIndex As UInteger = startIndex
 
@@ -132,8 +131,8 @@ Module UShortExtensions
    ''' <returns>Bytes of <paramref name="fromInteger"/> in Big Endian order (2 Bytes)</returns>
    <Extension>
    Public Function GetBigEndianBytes(ByRef fromInteger As UShort) As Byte()
-      Dim result(0 To 1) As Byte
-      Dim tempArray() As Byte
+      Dim result As Byte() = New Byte(0 To 1) {}
+      Dim tempArray As Byte()
 
       tempArray = BitConverter.GetBytes(fromInteger)
 
@@ -156,8 +155,8 @@ Module UShortExtensions
    ''' <returns>Bytes of <paramref name="fromInteger"/> in Big Endian order with length <paramref name="resultLength"/></returns>
    <Extension>
    Public Function GetBigEndianBytes(ByRef fromInteger As UShort, ByVal resultLength As UInteger) As Byte()
-      Dim result(0 To resultLength - 1) As Byte
-      Dim tempArray() As Byte
+      Dim result As Byte() = New Byte(0 To resultLength - 1) {}
+      Dim tempArray As Byte()
 
       tempArray = BitConverter.GetBytes(fromInteger)
 
@@ -176,5 +175,4 @@ Module UShortExtensions
 
       Return result
    End Function
-
 End Module

@@ -27,7 +27,7 @@ Module BigIntegerExtensions
       '
       Dim workByteArray(0 To 1) As Byte
 
-      Do While Not workNumber = Numerics.BigInteger.Zero
+      Do While workNumber <> Numerics.BigInteger.Zero
          workNumber = Numerics.BigInteger.DivRem(workNumber, workRadix, remainder)
 
          '
@@ -65,9 +65,8 @@ Module BigIntegerExtensions
 
       result = dividend Mod divisor
 
-      If result.Sign < 0 Then
+      If result.Sign < 0 Then _
          result = divisor + result  ' If the result is negative, make it 0, or positive
-      End If
 
       Return result
    End Function
