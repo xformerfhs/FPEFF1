@@ -18,12 +18,13 @@
 '
 ' Author: Frank Schwab, DB Systel GmbH
 '
-' Version: 1.1.0
+' Version: 1.2.0
 '
 ' History:
 '    2017-04-24 Created.
 '    2019-10-25 Bump up minimum domain size according to NIST SP 800-38G REV. 1.
 '    2021-01-04 Corrected several SonarLint findings.
+'    2021-09-20 Move to integer variables to comply with data types expected in loops and indices.
 '    
 ' Example:
 '    Dim sourceText() As UShort = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
@@ -39,22 +40,26 @@
 '    decryptedData = FF1.decrypt(encryptedData, 10, key, tweak)
 '
 
+Option Strict On
+
 ''' <summary>
-''' Implements the FF1 algorithm as specified in NIST Special Publication 800-38G (March 2016)
+''' Implements the FF1 algorithm as specified in NIST Special Publication 800-38G (March 2016, https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf)
 ''' </summary>
 Public Class FF1
+#Region "Private constants"
    '
    ' Private constants
    '
-#Region "Private constants"
+
    ' Minimum domain size according to NIST SP 800-38G REV. 1
    Private Const MINIMUM_DOMAIN_SIZE As Double = 1000000
 #End Region
 
+#Region "Private methods"
    '
    ' Private methods
    '
-#Region "Private methods"
+
 #Region "Algorithm helper methods"
    ''' <summary>
    ''' Pseudo random function as specified in FF1, algorithm 6
@@ -63,12 +68,12 @@ Public Class FF1
    ''' <param name="byteArray">Data to be used in generating the PRF value</param>
    ''' <returns>Pseudo random number</returns>
    Private Shared Function PseudoRandomFunction(ByRef encryptor As Security.Cryptography.ICryptoTransform, ByRef byteArray As Byte()) As Byte()
-      Dim blockCount As UInteger = byteArray.Length >> 4
-      Dim startIndex As UInteger = 0
+      Dim blockCount As Integer = byteArray.Length >> 4
+      Dim startIndex As Integer = 0
 
       Dim result As Byte() = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
-      For i As UShort = 1 To blockCount
+      For i As Integer = 1 To blockCount
          result = encryptor.TransformFinalBlock(result.XorValues(byteArray, startIndex), 0, result.Length)
          startIndex += result.Length
       Next
@@ -84,7 +89,7 @@ Public Class FF1
    ''' <param name="leftLength">Length of the left part of the source</param>
    ''' <param name="tweakLength">Length of the tweak</param>
    ''' <returns>The (from there on) constant array P</returns>
-   Private Shared Function InitializeP(ByVal sourceLength As UInteger, ByVal radix As UInteger, ByVal leftLength As UInteger, ByVal tweakLength As UInteger) As Byte()
+   Private Shared Function InitializeP(ByVal sourceLength As Integer, ByVal radix As UInteger, ByVal leftLength As Integer, ByVal tweakLength As Integer) As Byte()
       Dim result As Byte() = New Byte(0 To 15) {}
 
       result(0) = 1
@@ -95,7 +100,7 @@ Public Class FF1
 
       result(6) = 10
 
-      result(7) = CByte(leftLength Mod 256)
+      result(7) = CByte(leftLength And &HFF)
 
       sourceLength.GetBigEndianBytes.CopyTo(result, 8)
 
@@ -111,14 +116,14 @@ Public Class FF1
    ''' <param name="tweakLength">Length of the tweak byte array</param>
    ''' <param name="maxPartNumberByteLength">Maximum byte length of the binary numbers used in the calculation parts</param>
    ''' <returns>The array Q with the constant parts set</returns>
-   Private Shared Function InitializeQ(ByRef tweak As Byte(), ByVal tweakLength As UInteger, ByVal maxPartNumberByteLength As UInteger) As Byte()
-      Dim padLength As UInteger = 16 - ((tweakLength + maxPartNumberByteLength + 1) Mod 16)
+   Private Shared Function InitializeQ(ByRef tweak As Byte(), ByVal tweakLength As Integer, ByVal maxPartNumberByteLength As Integer) As Byte()
+      Dim padLength As Integer = 16 - ((tweakLength + maxPartNumberByteLength + 1) And &HF)
 
       Dim result As Byte() = New Byte(0 To tweakLength + padLength + maxPartNumberByteLength) {}
 
-      Dim actIndex As UInteger = 0
+      Dim actIndex As Integer = 0
 
-      Dim i As UInteger = 0
+      Dim i As Integer = 0
       Do While i < tweakLength
          result(i) = tweak(i)
          actIndex = i
@@ -142,14 +147,15 @@ Public Class FF1
    ''' <param name="roundNumber">Round number</param>
    ''' <param name="partAsBigInteger">Part that is used in the calculation</param>
    ''' <param name="maxPartNumberByteLength">Maximum byte length of the binary numbers used in the calculation parts</param>
-   Private Shared Sub ComplementQ(ByRef q As Byte(), ByVal roundNumber As Byte, ByRef partAsBigInteger As Numerics.BigInteger, ByVal maxPartNumberByteLength As UInteger)
-      Dim actIndex As UInteger
+   Private Shared Sub ComplementQ(ByRef q As Byte(), ByVal roundNumber As Integer, ByRef partAsBigInteger As Numerics.BigInteger, ByVal maxPartNumberByteLength As Integer)
+      Dim actIndex As Integer
 
       actIndex = q.Length - maxPartNumberByteLength
       Array.Copy(partAsBigInteger.ToByteArray.NewWithReversedOrder(maxPartNumberByteLength), 0, q, actIndex, maxPartNumberByteLength)
 
       actIndex -= 1
-      q(actIndex) = roundNumber
+
+      q(actIndex) = CByte(roundNumber And &HFF)
    End Sub
 
    ''' <summary>
@@ -159,14 +165,14 @@ Public Class FF1
    ''' <param name="r">Output of the pseudo random function</param>
    ''' <param name="blockCount">No. of blocks to be processed</param>
    ''' <param name="encryptor">AES-ECB-NoPadding encryptor with key already set</param>
-   Private Shared Sub ConstructS(ByRef s As Byte(), ByRef r As Byte(), ByVal blockCount As UInteger, ByRef encryptor As Security.Cryptography.ICryptoTransform)
+   Private Shared Sub ConstructS(ByRef s As Byte(), ByRef r As Byte(), ByVal blockCount As Integer, ByRef encryptor As Security.Cryptography.ICryptoTransform)
       Dim xorBlock As Byte() = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-      Dim xorBlockLength As UInteger = xorBlock.Length
-      Dim sOffset As UInteger = xorBlockLength
+      Dim xorBlockLength As Integer = xorBlock.Length
+      Dim sOffset As Integer = xorBlockLength
 
       Array.Copy(r, s, r.Length)
 
-      For i As UInteger = 1 To blockCount - 1
+      For i As Integer = 1 To blockCount - 1
          i.GetBigEndianBytes.CopyTo(xorBlock, 12)
 
          Array.Copy(encryptor.TransformFinalBlock(r.XorValues(xorBlock, 0), 0, xorBlockLength), 0, s, sOffset, xorBlockLength)
@@ -198,20 +204,20 @@ Public Class FF1
    ''' <param name="p">Output: Array P as specified in FF1, algorithm 7 and algorithm 8</param>
    ''' <param name="q">Output: Array P as specified in FF1, algorithm 7 and algorithm 8</param>
    Private Shared Sub SetUpMachinery(ByRef source As UShort(),
-                                     ByRef radix As UShort,
+                                     ByRef radix As UInteger,
                                      ByRef encryptionKey As Byte(),
                                      ByRef tweak As Byte(),
-                                     ByRef sourceLength As UInteger,
-                                     ByRef tweakLength As UInteger,
-                                     ByRef leftLength As UInteger,
-                                     ByRef rightLength As UInteger,
+                                     ByRef sourceLength As Integer,
+                                     ByRef tweakLength As Integer,
+                                     ByRef leftLength As Integer,
+                                     ByRef rightLength As Integer,
                                      ByRef radixToTheLeftSize As Numerics.BigInteger,
                                      ByRef radixToTheRightSize As Numerics.BigInteger,
                                      ByRef leftPart As UShort(),
                                      ByRef rightPart As UShort(),
-                                     ByRef maxPartNumberByteLength As UInteger,
-                                     ByRef feistelRoundOutputLength As UInteger,
-                                     ByRef blockCount As UInteger,
+                                     ByRef maxPartNumberByteLength As Integer,
+                                     ByRef feistelRoundOutputLength As Integer,
+                                     ByRef blockCount As Integer,
                                      ByRef aesCipher As Security.Cryptography.AesManaged,
                                      ByRef encryptor As Security.Cryptography.ICryptoTransform,
                                      ByRef p As Byte(),
@@ -225,22 +231,22 @@ Public Class FF1
       leftLength = sourceLength >> 1
       rightLength = sourceLength - leftLength
 
-      radixToTheLeftSize = radix ^ leftLength
-      radixToTheRightSize = radix ^ rightLength
+      radixToTheLeftSize = New Numerics.BigInteger(radix ^ leftLength)
+      radixToTheRightSize = New Numerics.BigInteger(radix ^ rightLength)
 
       leftPart = source.NewFromPartWithCheckForRadix(0, leftLength, radix)
       rightPart = source.NewFromPartWithCheckForRadix(leftLength, rightLength, radix)
 
-      maxPartNumberByteLength = Math.Ceiling(Math.Ceiling(rightLength * Math.Log(radix) / Math.Log(2)) * 0.125)
-      feistelRoundOutputLength = 4 * Math.Ceiling(maxPartNumberByteLength * 0.25) + 4
-      blockCount = Math.Ceiling(feistelRoundOutputLength * 0.0625)
+      maxPartNumberByteLength = CInt(Math.Ceiling(Math.Ceiling(rightLength * Math.Log(radix) / Math.Log(2)) * 0.125))
+      feistelRoundOutputLength = CInt(4 * Math.Ceiling(maxPartNumberByteLength * 0.25)) + 4
+      blockCount = CInt(Math.Ceiling(feistelRoundOutputLength * 0.0625))
 
       '
       ' Initialize byte arrays
       '
       p = InitializeP(sourceLength, radix, leftLength, tweakLength)   ' This is a constant that is only computed once
 
-      q = InitializeQ(tweak, tweakLength, maxPartNumberByteLength) ' This part of q never changes, so it is computed only once
+      q = InitializeQ(tweak, tweakLength, maxPartNumberByteLength)    ' This part of q never changes, so it is computed only once
 
       '
       ' Initialize the crypto functions
@@ -278,12 +284,12 @@ Public Class FF1
    Private Shared Function CalculateY(ByRef p As Byte(),
                                       ByRef q As Byte(),
                                       ByRef s As Byte(),
-                                      ByVal roundNumber As Byte,
-                                      ByVal radix As UShort,
+                                      ByVal roundNumber As Integer,
+                                      ByVal radix As UInteger,
                                       ByRef part As UShort(),
-                                      ByVal maxPartNumberByteLength As UInteger,
-                                      ByVal blockCount As UInteger,
-                                      ByVal feistelRoundOutputLength As UInteger,
+                                      ByVal maxPartNumberByteLength As Integer,
+                                      ByVal blockCount As Integer,
+                                      ByVal feistelRoundOutputLength As Integer,
                                       ByRef encryptor As Security.Cryptography.ICryptoTransform) As Numerics.BigInteger
       ComplementQ(q, roundNumber, part.ToBigIntegerWithRadix(radix), maxPartNumberByteLength)
 
@@ -300,31 +306,25 @@ Public Class FF1
    ''' <param name="source">Source array</param>
    ''' <param name="radix">Radix of the numbers in the source array</param>
    Private Shared Sub CheckParameters(ByRef source As UShort(), ByRef radix As UInteger, ByRef encryptionKey As Byte(), ByRef tweak As Byte())
-      If source Is Nothing Then
+      If source Is Nothing Then _
          Throw New ArgumentException("Source is nothing")
-      End If
 
-      If encryptionKey Is Nothing Then
+      If encryptionKey Is Nothing Then _
          Throw New ArgumentException("Key is nothing")
-      End If
 
-      If radix < 2 Then
+      If radix < 2 Then _
          Throw New ArgumentException("Radix is less than 2")
-      End If
 
-      If radix > 2 ^ 16 Then
-         Throw New ArgumentException("Radix is greater than 2^16")
-      End If
+      If radix > &H10000 Then _
+         Throw New ArgumentException("Radix is greater than than 2^16")
 
-      If source.LongLength >= 2L ^ 32 Then
+      If source.LongLength >= &H100000000L Then _
          Throw New ArgumentException("Source length is longer than or equal to 2^32 elements")
-      End If
 
-      Dim minLength As UInteger = Math.Ceiling(Math.Log(MINIMUM_DOMAIN_SIZE) / Math.Log(radix))
+      Dim minLength As Integer = CInt(Math.Ceiling(Math.Log(MINIMUM_DOMAIN_SIZE) / Math.Log(radix)))
 
-      If source.Length < minLength Then
+      If source.Length < minLength Then _
          Throw New ArgumentException("Source is too short for radix. Minimum length is " & FormatNumber(minLength, 0))
-      End If
 
       Select Case encryptionKey.Length
          Case 16, 24, 32
@@ -332,9 +332,8 @@ Public Class FF1
             Throw New ArgumentException("Encryption key is not 128, 192, or 256 bits long")
       End Select
 
-      If tweak Is Nothing Then
+      If tweak Is Nothing Then _
          tweak = New Byte() {}
-      End If
    End Sub
 #End Region
 #End Region
@@ -352,11 +351,11 @@ Public Class FF1
    ''' <param name="tweak">Tweak</param>
    ''' <returns>Encrypted data</returns>
    Public Shared Function Encrypt(ByRef source As UShort(), ByRef radix As UInteger, ByRef encryptionKey As Byte(), ByRef tweak As Byte()) As UShort()
-      Dim sourceLength As UInteger
-      Dim tweakLength As UInteger
+      Dim sourceLength As Integer
+      Dim tweakLength As Integer
 
-      Dim leftLength As UInteger
-      Dim rightSize As UInteger
+      Dim leftLength As Integer
+      Dim rightSize As Integer
 
       Dim radixToTheLeftSize As Numerics.BigInteger
       Dim radixToTheRightSize As Numerics.BigInteger
@@ -367,9 +366,9 @@ Public Class FF1
       Dim p As Byte()
       Dim q As Byte()
 
-      Dim maxPartNumberByteLength As UInteger
-      Dim feistelRoundOutputLength As UInteger
-      Dim blockCount As UInteger
+      Dim maxPartNumberByteLength As Integer
+      Dim feistelRoundOutputLength As Integer
+      Dim blockCount As Integer
 
       Dim aesCipher As Security.Cryptography.AesManaged
       Dim encryptor As Security.Cryptography.ICryptoTransform
@@ -390,9 +389,9 @@ Public Class FF1
 
       Dim c As Numerics.BigInteger
 
-      Dim newPartSize As UInteger
+      Dim newPartSize As Integer
 
-      Dim roundNumber As Byte = 0
+      Dim roundNumber As Integer = 0
 
       Do While roundNumber < 10
          y = CalculateY(p, q, s, roundNumber, radix, rightPart, maxPartNumberByteLength, blockCount, feistelRoundOutputLength, encryptor)
@@ -426,11 +425,11 @@ Public Class FF1
    ''' <param name="tweak">Tweak</param>
    ''' <returns>Decrypted data</returns>
    Public Shared Function Decrypt(ByRef source As UShort(), ByRef radix As UInteger, ByRef decryptionKey As Byte(), ByRef tweak As Byte()) As UShort()
-      Dim sourceLength As UInteger
-      Dim tweakLength As UInteger
+      Dim sourceLength As Integer
+      Dim tweakLength As Integer
 
-      Dim leftLength As UInteger
-      Dim rightSize As UInteger
+      Dim leftLength As Integer
+      Dim rightSize As Integer
 
       Dim radixToTheLeftSize As Numerics.BigInteger
       Dim radixToTheRightSize As Numerics.BigInteger
@@ -441,9 +440,9 @@ Public Class FF1
       Dim p As Byte()
       Dim q As Byte()
 
-      Dim maxPartNumberByteLength As UInteger
-      Dim feistelRoundOutputLength As UInteger
-      Dim blockCount As UInteger
+      Dim maxPartNumberByteLength As Integer
+      Dim feistelRoundOutputLength As Integer
+      Dim blockCount As Integer
 
       Dim aesCipher As Security.Cryptography.AesManaged
       Dim encryptor As Security.Cryptography.ICryptoTransform
@@ -462,9 +461,9 @@ Public Class FF1
 
       Dim c As Numerics.BigInteger
 
-      Dim newPartSize As UInteger
+      Dim newPartSize As Integer
 
-      Dim roundNumber As Byte = 10
+      Dim roundNumber As Integer = 10
 
       Do While roundNumber > 0
          roundNumber -= 1

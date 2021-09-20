@@ -1,4 +1,32 @@
-﻿Imports System.Runtime.CompilerServices
+﻿'
+' SPDX-FileCopyrightText: 2021 DB Systel GmbH
+'
+' SPDX-License-Identifier: Apache-2.0
+'
+' Licensed under the Apache License, Version 2.0 (the "License");
+' You may not use this file except in compliance with the License.
+'
+' You may obtain a copy of the License at
+'
+'     http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software
+' distributed under the License is distributed on an "AS IS" BASIS,
+' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+' See the License for the specific language governing permissions and
+' limitations under the License.
+'
+' Author: Frank Schwab
+'
+' Version: 1.0.0
+'
+' History:
+'    2017-04-24  Created
+'
+
+Option Strict On
+
+Imports System.Runtime.CompilerServices
 
 ''' <summary>
 ''' Methods missing from the <c>UShort</c> implementation
@@ -18,9 +46,9 @@ Module UShortExtensions
    <Extension>
    Public Function XorValues(ByRef firstArray As UShort(), ByRef secondArray As UShort()) As UShort()
       Dim result As UShort() = New UShort(0 To firstArray.Length - 1) {}
-      Dim copyLength As UInteger = Math.Min(firstArray.Length, secondArray.Length)
+      Dim copyLength As Integer = Math.Min(firstArray.Length, secondArray.Length)
 
-      Dim i As UInteger
+      Dim i As Integer
 
       For i = 0 To copyLength - 1
          result(i) = firstArray(i) Xor secondArray(i)
@@ -48,11 +76,11 @@ Module UShortExtensions
    ''' <param name="secondArrayStartIndex">Start index in the second array</param>
    ''' <returns>New <c>UShort</c> array with the XOR-ed values of the parameter elements</returns>
    <Extension>
-   Public Function XorValues(ByRef firstArray As UShort(), ByRef secondArray As UShort(), ByVal secondArrayStartIndex As UInteger) As UShort()
+   Public Function XorValues(ByRef firstArray As UShort(), ByRef secondArray As UShort(), ByVal secondArrayStartIndex As Integer) As UShort()
       Dim result As UShort() = New UShort(0 To firstArray.Length - 1) {}
-      Dim copyLength As UInteger = Math.Max(0, Math.Min(firstArray.Length, secondArray.Length - secondArrayStartIndex))
+      Dim copyLength As Integer = Math.Max(0, Math.Min(firstArray.Length, secondArray.Length - secondArrayStartIndex))
 
-      Dim i As UInteger = 0
+      Dim i As Integer = 0
 
       Do While i < copyLength
          result(i) = firstArray(i) Xor secondArray(secondArrayStartIndex)
@@ -82,7 +110,7 @@ Module UShortExtensions
    Public Function ToBigIntegerWithRadix(ByRef anUShortArray As UShort(), ByVal radix As UInteger) As Numerics.BigInteger
       Dim result As Numerics.BigInteger = Numerics.BigInteger.Zero
 
-      For i As UInteger = 0 To anUShortArray.Length - 1
+      For i As Integer = 0 To anUShortArray.Length - 1
          result = result * radix + anUShortArray(i)
       Next
 
@@ -99,15 +127,15 @@ Module UShortExtensions
    ''' <param name="radix">Radix of the digits</param>
    ''' <returns>New <c>UShort</c> array with the data copied from the source array as specified and each "digit" guaranteed to be valid</returns>
    <Extension>
-   Public Function NewFromPartWithCheckForRadix(ByRef sourceArray As UShort(), ByVal startIndex As UInteger, ByVal resultLength As UInteger, ByVal radix As UInteger) As UShort()
-      Dim copyLength As UInteger = Math.Max(0, Math.Min(sourceArray.Length - startIndex, resultLength))
+   Public Function NewFromPartWithCheckForRadix(ByRef sourceArray As UShort(), ByVal startIndex As Integer, ByVal resultLength As Integer, ByVal radix As UInteger) As UShort()
+      Dim copyLength As Integer = Math.Max(0, Math.Min(sourceArray.Length - startIndex, resultLength))
       Dim result As UShort() = New UShort(0 To resultLength - 1) {}
 
-      Dim sourceIndex As UInteger = startIndex
+      Dim sourceIndex As Integer = startIndex
 
       Dim actDigit As UShort
 
-      For i As UInteger = 0 To copyLength - 1
+      For i As Integer = 0 To copyLength - 1
          actDigit = sourceArray(sourceIndex)
 
          '
@@ -154,16 +182,16 @@ Module UShortExtensions
    ''' <param name="resultLength">Result length</param>
    ''' <returns>Bytes of <paramref name="fromInteger"/> in Big Endian order with length <paramref name="resultLength"/></returns>
    <Extension>
-   Public Function GetBigEndianBytes(ByRef fromInteger As UShort, ByVal resultLength As UInteger) As Byte()
+   Public Function GetBigEndianBytes(ByRef fromInteger As UShort, ByVal resultLength As Integer) As Byte()
       Dim result As Byte() = New Byte(0 To resultLength - 1) {}
       Dim tempArray As Byte()
 
       tempArray = BitConverter.GetBytes(fromInteger)
 
-      Dim copyLength As UInteger = Math.Min(2, resultLength)
-      Dim tempIndex As UInteger = 2
+      Dim copyLength As Integer = Math.Min(2, resultLength)
+      Dim tempIndex As Integer = 2
 
-      Dim i As UInteger = Math.Max(0, resultLength - copyLength)
+      Dim i As Integer = Math.Max(0, resultLength - copyLength)
 
       Do While i < resultLength
          tempIndex -= 1

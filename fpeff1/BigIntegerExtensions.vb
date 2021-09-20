@@ -1,4 +1,32 @@
-﻿Imports System.Runtime.CompilerServices
+﻿'
+' SPDX-FileCopyrightText: 2021 DB Systel GmbH
+'
+' SPDX-License-Identifier: Apache-2.0
+'
+' Licensed under the Apache License, Version 2.0 (the "License");
+' You may not use this file except in compliance with the License.
+'
+' You may obtain a copy of the License at
+'
+'     http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software
+' distributed under the License is distributed on an "AS IS" BASIS,
+' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+' See the License for the specific language governing permissions and
+' limitations under the License.
+'
+' Author: Frank Schwab
+'
+' Version: 1.0.0
+'
+' History:
+'    2017-04-24  Created
+'
+
+Option Strict On
+
+Imports System.Runtime.CompilerServices
 
 ''' <summary>
 ''' Methods missing from the <c>Numerics.BigInteger</c> implementation
@@ -13,14 +41,14 @@ Module BigIntegerExtensions
    ''' <param name="resultSize">The size of the resulting array</param>
    ''' <returns><c>UShort</c> array of the digits in <paramref name="aNumber"/> with radix <paramref name="radix"/></returns>
    <Extension>
-   Public Function ToBigEndianUShortArrayForRadix(ByRef aNumber As Numerics.BigInteger, ByVal radix As UInteger, ByVal resultSize As UInteger) As UShort()
+   Public Function ToBigEndianUShortArrayForRadix(ByRef aNumber As Numerics.BigInteger, ByVal radix As UInteger, ByVal resultSize As Integer) As UShort()
       Dim result(0 To resultSize - 1) As UShort
 
       Dim workNumber As Numerics.BigInteger = aNumber
       Dim workRadix As New Numerics.BigInteger(radix)    ' We need the radix as a BigInteger
       Dim remainder As Numerics.BigInteger = Numerics.BigInteger.Zero
 
-      Dim i As UInteger = resultSize
+      Dim i As Integer = resultSize
 
       '
       ' We need to specify a Byte array with 2 elements so "BitConverter.ToUInt16" will work

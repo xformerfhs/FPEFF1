@@ -1,4 +1,32 @@
-﻿Imports System.Runtime.CompilerServices
+﻿'
+' SPDX-FileCopyrightText: 2021 DB Systel GmbH
+'
+' SPDX-License-Identifier: Apache-2.0
+'
+' Licensed under the Apache License, Version 2.0 (the "License");
+' You may not use this file except in compliance with the License.
+'
+' You may obtain a copy of the License at
+'
+'     http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software
+' distributed under the License is distributed on an "AS IS" BASIS,
+' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+' See the License for the specific language governing permissions and
+' limitations under the License.
+'
+' Author: Frank Schwab
+'
+' Version: 1.0.0
+'
+' History:
+'    2017-04-24  Created
+'
+
+Option Strict On
+
+Imports System.Runtime.CompilerServices
 
 ''' <summary>
 ''' Methods missing from the <c>Byte</c> implementation
@@ -11,12 +39,12 @@ Module ByteExtensions
    ''' <returns>New <c>Byte</c> array in reverse order</returns>
    <Extension>
    Public Function NewWithReversedOrder(ByRef sourceArray() As Byte) As Byte()
-      Dim resultLength As UInteger = sourceArray.Length
+      Dim resultLength As Integer = sourceArray.Length
       Dim result As Byte() = New Byte(0 To resultLength - 1) {}
 
-      Dim destinationIndex As UInteger = resultLength
+      Dim destinationIndex As Integer = resultLength
 
-      Dim i As UInteger = 0
+      Dim i As Integer = 0
 
       Do While i < resultLength
          destinationIndex -= 1
@@ -38,15 +66,15 @@ Module ByteExtensions
    ''' <param name="minLength">Minimum guaranteed length of the result</param>
    ''' <returns>New <c>Byte</c> array in reverse order with guaranteed minimum length</returns>
    <Extension>
-   Public Function NewWithReversedOrder(ByRef sourceArray() As Byte, ByVal minLength As UInteger) As Byte()
-      Dim resultLength As UInteger = Math.Max(sourceArray.Length, minLength)
+   Public Function NewWithReversedOrder(ByRef sourceArray() As Byte, ByVal minLength As Integer) As Byte()
+      Dim resultLength As Integer = Math.Max(sourceArray.Length, minLength)
       Dim result As Byte() = New Byte(0 To resultLength - 1) {}
 
-      Dim copyLength As UInteger = Math.Min(resultLength, sourceArray.Length)
+      Dim copyLength As Integer = Math.Min(resultLength, sourceArray.Length)
 
-      Dim destinationIndex As UInteger = resultLength
+      Dim destinationIndex As Integer = resultLength
 
-      Dim i As UInteger = 0
+      Dim i As Integer = 0
 
       Do While i < copyLength
          destinationIndex -= 1
@@ -68,16 +96,16 @@ Module ByteExtensions
    ''' <returns>New <c>Byte</c> array with reversed elements and an additional <c>&amp;H00</c> byte at the highest index.
    ''' Note that the result has one more element than specified by <paramref name="sourceLength"/></returns>
    <Extension>
-   Public Function ReverseWithUnsignedExtension(ByRef sourceArray() As Byte, ByVal sourceLength As UInteger) As Byte()
+   Public Function ReverseWithUnsignedExtension(ByRef sourceArray() As Byte, ByVal sourceLength As Integer) As Byte()
       Dim result As Byte() = New Byte(0 To sourceLength) {}
 
-      Dim copyLength As UInteger = Math.Min(sourceLength, sourceArray.Length)
+      Dim copyLength As Integer = Math.Min(sourceLength, sourceArray.Length)
 
-      Dim destinationIndex As UInteger = copyLength
+      Dim destinationIndex As Integer = copyLength
 
       result(destinationIndex) = 0  ' This ensures that the result is a positive number when converted to a BigInteger
 
-      Dim i As UInteger = 0
+      Dim i As Integer = 0
 
       Do While i < copyLength
          destinationIndex -= 1
@@ -102,9 +130,9 @@ Module ByteExtensions
    <Extension>
    Public Function XorValues(ByRef firstArray() As Byte, ByRef secondArray() As Byte) As Byte()
       Dim result As Byte() = New Byte(0 To firstArray.Length - 1) {}
-      Dim copyLength As UInteger = Math.Min(firstArray.Length, secondArray.Length)
+      Dim copyLength As Integer = Math.Min(firstArray.Length, secondArray.Length)
 
-      Dim i As UInteger
+      Dim i As Integer
 
       For i = 0 To copyLength - 1
          result(i) = firstArray(i) Xor secondArray(i)
@@ -132,11 +160,11 @@ Module ByteExtensions
    ''' <param name="secondArrayStartIndex">Start index in the second array</param>
    ''' <returns>New <c>Byte</c> array with the XOR-ed values of the parameter elements</returns>
    <Extension>
-   Public Function XorValues(ByRef firstArray() As Byte, ByRef secondArray() As Byte, ByVal secondArrayStartIndex As UInteger) As Byte()
+   Public Function XorValues(ByRef firstArray() As Byte, ByRef secondArray() As Byte, ByVal secondArrayStartIndex As Integer) As Byte()
       Dim result As Byte() = New Byte(0 To firstArray.Length - 1) {}
-      Dim copyLength As UInteger = Math.Max(0, Math.Min(firstArray.Length, secondArray.Length - secondArrayStartIndex))
+      Dim copyLength As Integer = Math.Max(0, Math.Min(firstArray.Length, secondArray.Length - secondArrayStartIndex))
 
-      Dim i As UInteger = 0
+      Dim i As Integer = 0
 
       Do While i < copyLength
          result(i) = firstArray(i) Xor secondArray(secondArrayStartIndex)

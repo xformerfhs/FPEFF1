@@ -25,6 +25,8 @@
 '    2021-01-04  Fixed some SonarLint findings
 '
 
+Option Strict On
+
 ''' <summary>
 ''' Simple demonstration program for FF1 encryption/decryption
 ''' </summary>
@@ -37,7 +39,7 @@ Module fpeff1
    ''' <param name="destinationArray">The array in which to place the value</param>
    ''' <param name="arrayIndex">The index of the array element that receives the value</param>
    ''' <returns><c>True</c>, if conversion succedded, <c>False</c>, if not</returns>
-   Private Function TryProcessUShort(ByRef aNumberText As String, ByRef destinationArray As UShort(), ByVal arrayIndex As UInteger) As Boolean
+   Private Function TryProcessUShort(ByRef aNumberText As String, ByRef destinationArray As UShort(), ByVal arrayIndex As Integer) As Boolean
       Dim actNumber As UShort = 0
 
       If UShort.TryParse(aNumberText, actNumber) Then
@@ -56,14 +58,14 @@ Module fpeff1
    ''' <param name="destinationArray">Array that receives the converted numbers</param>
    ''' <returns><c>True</c>, if conversion succedded, <c>False</c>, if not</returns>
    Private Function CommaSeparatedListToUShortArray(ByRef text As String, ByRef destinationArray As UShort()) As Boolean
-      Dim actTextIndex As UShort = 0
-      Dim actNumberStart As UShort = 0
+      Dim actTextIndex As Integer = 0
+      Dim actNumberStart As Integer = 0
 
       Dim inNumber As Boolean = False
 
       destinationArray = New UShort(0 To text.Length >> 1) {}
 
-      Dim actArrayIndex As UInteger = 0
+      Dim actArrayIndex As Integer = 0
 
       For Each actChar As Char In text
          If Char.IsDigit(actChar) Then
@@ -112,13 +114,13 @@ Module fpeff1
    ''' <returns><c>True</c>, if conversion succedded, <c>False</c>, if not</returns>
    Private Function HexTextToByteArray(ByRef text As String, ByRef destinationArray As Byte()) As Boolean
       If (text.Length And 1) = 0 Then
-         Dim actTextIndex As UShort = 0
+         Dim actTextIndex As Integer = 0
 
          Dim isEven As Boolean = False
 
          destinationArray = New Byte(0 To (text.Length >> 1) - 1) {}
 
-         Dim actArrayIndex As UInteger = 0
+         Dim actArrayIndex As Integer = 0
 
          For Each actChar As Char In text
             If isEven Then
@@ -189,7 +191,7 @@ Module fpeff1
                Return False
          End Select
 
-         If Not UInteger.TryParse(commandLineArguments(1), radix) Then
+         If Not UInteger.TryParse(commandLineArguments(1), CUInt(radix)) Then
             Console.Error.WriteLine("Radix '{0}' is not an integer number", commandLineArguments(2))
             ShowUsage()
             Return False
@@ -234,9 +236,12 @@ Module fpeff1
       Dim radix As UInteger = 5
       Dim shouldEncrypt As Boolean
 
-#Disable Warning BC42030
+      '
+      ' All of the arguments will be set in SimpleCommandLineParser
+      '
+#Disable Warning BC42030 ' Variable is passed by reference before it has been assigned a value
       If SimpleCommandLineParser(commandLineArguments, shouldEncrypt, sourceText, radix, key, tweak) Then
-#Enable Warning BC42030
+#Enable Warning BC42030 ' Variable is passed by reference before it has been assigned a value
          Dim convertedText As UShort()
 
          Try
@@ -256,6 +261,8 @@ Module fpeff1
          End Try
 
          Console.Out.WriteLine(String.Join(",", convertedText))
+
+         Console.ReadKey()
 
          Return 0
       Else
