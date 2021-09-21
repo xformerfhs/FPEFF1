@@ -43,7 +43,7 @@
 Option Strict On
 
 ''' <summary>
-''' Implements the FF1 algorithm as specified in <see href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf">NIST Special Publication 800-38G (March 2016)</see>
+''' Implements the FF1 algorithm as specified in <see href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf">NIST Special Publication 800-38G (February 2019)</see>
 ''' </summary>
 Public Class FF1
 #Region "Private constants"

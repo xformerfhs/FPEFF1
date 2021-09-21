@@ -1,5 +1,5 @@
 # FPEFF1
-Visual Basic .Net class for the format preserving encryption algorithm FF1 as specified in [NIST Special Publication 800-38G (March 2016)](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf "NIST SP 800-38Gr1").
+Visual Basic .Net class for the format preserving encryption algorithm FF1 as specified in [NIST Special Publication 800-38G (February 2019)](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf "NIST SP 800-38Gr1").
 
 ## Format Preserving Encryption
 [Format preserving encryption](https://en.wikipedia.org/wiki/Format-preserving_encryption "FPE") is an cryptographic method to encrypt and decrypt data in such a way that the encrypted data is in the same format as the original data. I.e. if the original data are 16-digit credit card numbers then the encrypted data are 16-digit data, as well. This way one can encrypt data even for systems that do not know how to handle encrypted data.
