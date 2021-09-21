@@ -18,11 +18,12 @@
 '
 ' Author: Frank Schwab
 '
-' Version: 1.1.0
+' Version: 1.1.1
 '
 ' History:
-'    2017-04-24  Created
-'    2021-01-04  Fixed some SonarLint findings
+'    2017-04-24  Created.
+'    2021-01-04  Fixed some SonarLint findings.
+'    2021-09-21  Fixed unnecessary assignment to radix.
 '
 
 Option Strict On
@@ -191,7 +192,7 @@ Module fpeff1
                Return False
          End Select
 
-         If Not UInteger.TryParse(commandLineArguments(1), CUInt(radix)) Then
+         If Not UInteger.TryParse(commandLineArguments(1), radix) Then
             Console.Error.WriteLine("Radix '{0}' is not an integer number", commandLineArguments(2))
             ShowUsage()
             Return False
@@ -233,7 +234,7 @@ Module fpeff1
       Dim sourceText As UShort()
       Dim tweak As Byte()
       Dim key As Byte()
-      Dim radix As UInteger = 5
+      Dim radix As UInteger
       Dim shouldEncrypt As Boolean
 
       '
