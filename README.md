@@ -29,7 +29,7 @@ The command line program can be used like this:
 
     fpeff1 encrypt 10 0,1,2,3,4,5,6,7,8,9 2B7E151628AED2A6ABF7158809CF4F3C 39383736353433323130    
 
-This means: Encrypt the numbers "0,1,2,3,4,5,6,7,8,9" with the FF1 algorithm using the key "2B7E151628AED2A6ABF7158809CF4F3C" and the tweak "39383736353433323130". The expected output is:
+This means: Encrypt the base 10 numbers "0,1,2,3,4,5,6,7,8,9" with the FF1 algorithm using the key "2B7E151628AED2A6ABF7158809CF4F3C" and the tweak "39383736353433323130". The expected output is:
 
     6,1,2,4,2,0,0,7,7,3
 
