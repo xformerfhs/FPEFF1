@@ -43,7 +43,7 @@
 Option Strict On
 
 ''' <summary>
-''' Implements the FF1 algorithm as specified in NIST Special Publication 800-38G (March 2016, https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf)
+''' Implements the FF1 algorithm as specified in <see href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf">NIST Special Publication 800-38G (March 2016)</see>
 ''' </summary>
 Public Class FF1
 #Region "Private constants"
@@ -375,11 +375,32 @@ Public Class FF1
 
       CheckParameters(source, radix, encryptionKey, tweak)
 
-#Disable Warning BC42030
-#Disable Warning BC42108
-      SetUpMachinery(source, radix, encryptionKey, tweak, sourceLength, tweakLength, leftLength, rightSize, radixToTheLeftSize, radixToTheRightSize, leftPart, rightPart, maxPartNumberByteLength, feistelRoundOutputLength, blockCount, aesCipher, encryptor, p, q)
-#Enable Warning BC42030
-#Enable Warning BC42108
+      '
+      ' Suppress warnings about variables without a value passed by reference. They are all assigned a value in "SetupMachinery".
+      '
+#Disable Warning BC42108 ' Variable is passed by reference before it has been assigned a value (structure variable)
+#Disable Warning BC42030 ' Variable is passed by reference before it has been assigned a value
+      SetUpMachinery(source,
+                     radix,
+                     encryptionKey,
+                     tweak,
+                     sourceLength,
+                     tweakLength,
+                     leftLength,
+                     rightSize,
+                     radixToTheLeftSize,
+                     radixToTheRightSize,
+                     leftPart,
+                     rightPart,
+                     maxPartNumberByteLength,
+                     feistelRoundOutputLength,
+                     blockCount,
+                     aesCipher,
+                     encryptor,
+                     p,
+                     q)
+#Enable Warning BC42030 ' Variable is passed by reference before it has been assigned a value
+#Enable Warning BC42108 ' Variable is passed by reference before it has been assigned a value (structure variable)
 
       Dim s As Byte() = New Byte(0 To (blockCount << 4) - 1) {}
 
@@ -447,11 +468,29 @@ Public Class FF1
       Dim aesCipher As Security.Cryptography.AesManaged
       Dim encryptor As Security.Cryptography.ICryptoTransform
 
-#Disable Warning BC42030
-#Disable Warning BC42108
-      SetUpMachinery(source, radix, decryptionKey, tweak, sourceLength, tweakLength, leftLength, rightSize, radixToTheLeftSize, radixToTheRightSize, leftPart, rightPart, maxPartNumberByteLength, feistelRoundOutputLength, blockCount, aesCipher, encryptor, p, q)
-#Enable Warning BC42030
-#Enable Warning BC42108
+#Disable Warning BC42108 ' Variable is passed by reference before it has been assigned a value (structure variable)
+#Disable Warning BC42030 ' Variable is passed by reference before it has been assigned a value
+      SetUpMachinery(source,
+                     radix,
+                     decryptionKey,
+                     tweak,
+                     sourceLength,
+                     tweakLength,
+                     leftLength,
+                     rightSize,
+                     radixToTheLeftSize,
+                     radixToTheRightSize,
+                     leftPart,
+                     rightPart,
+                     maxPartNumberByteLength,
+                     feistelRoundOutputLength,
+                     blockCount,
+                     aesCipher,
+                     encryptor,
+                     p,
+                     q)
+#Enable Warning BC42030 ' Variable is passed by reference before it has been assigned a value
+#Enable Warning BC42108 ' Variable is passed by reference before it has been assigned a value (structure variable)
 
       Dim s As Byte() = New Byte(0 To blockCount * 16 - 1) {}
 
