@@ -51,4 +51,4 @@ Feel free to submit a pull request with new features, improvements on tests or d
 Frank Schwab ([Mail](mailto:frank.schwab@deutschebahn.com "Mail"))
 
 ## License
-FPEFF1 is released under the 3-clause BSD license. See "LICENSE" for details.
+FPEFF1 is released under the Apache V2 license. See "LICENSE" for details.
