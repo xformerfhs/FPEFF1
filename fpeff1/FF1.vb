@@ -18,13 +18,14 @@
 '
 ' Author: Frank Schwab, DB Systel GmbH
 '
-' Version: 1.2.0
+' Version: 1.3.0
 '
 ' History:
 '    2017-04-24 Created.
 '    2019-10-25 Bump up minimum domain size according to NIST SP 800-38G REV. 1.
 '    2021-01-04 Corrected several SonarLint findings.
 '    2021-09-20 Move to integer variables to comply with data types expected in loops and indices.
+'    2021-09-27 Remove unused "aesCipher" variable and use AesCng instead of AesManaged.
 '    
 ' Example:
 '    Dim sourceText() As UShort = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
@@ -41,6 +42,9 @@
 '
 
 Option Strict On
+
+Imports System.Security.Cryptography
+Imports System.Numerics
 
 ''' <summary>
 ''' Implements the FF1 algorithm as specified in <see href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf">NIST Special Publication 800-38G (February 2019)</see>
@@ -67,7 +71,7 @@ Public Class FF1
    ''' <param name="encryptor">AES-ECB-NoPadding encryptor with key already set</param>
    ''' <param name="byteArray">Data to be used in generating the PRF value</param>
    ''' <returns>Pseudo random number</returns>
-   Private Shared Function PseudoRandomFunction(ByRef encryptor As Security.Cryptography.ICryptoTransform, ByRef byteArray As Byte()) As Byte()
+   Private Shared Function PseudoRandomFunction(ByRef encryptor As ICryptoTransform, ByRef byteArray As Byte()) As Byte()
       Dim blockCount As Integer = byteArray.Length >> 4
       Dim startIndex As Integer = 0
 
@@ -147,7 +151,7 @@ Public Class FF1
    ''' <param name="roundNumber">Round number</param>
    ''' <param name="partAsBigInteger">Part that is used in the calculation</param>
    ''' <param name="maxPartNumberByteLength">Maximum byte length of the binary numbers used in the calculation parts</param>
-   Private Shared Sub ComplementQ(ByRef q As Byte(), ByVal roundNumber As Integer, ByRef partAsBigInteger As Numerics.BigInteger, ByVal maxPartNumberByteLength As Integer)
+   Private Shared Sub ComplementQ(ByRef q As Byte(), ByVal roundNumber As Integer, ByRef partAsBigInteger As BigInteger, ByVal maxPartNumberByteLength As Integer)
       Dim actIndex As Integer
 
       actIndex = q.Length - maxPartNumberByteLength
@@ -165,7 +169,7 @@ Public Class FF1
    ''' <param name="r">Output of the pseudo random function</param>
    ''' <param name="blockCount">No. of blocks to be processed</param>
    ''' <param name="encryptor">AES-ECB-NoPadding encryptor with key already set</param>
-   Private Shared Sub ConstructS(ByRef s As Byte(), ByRef r As Byte(), ByVal blockCount As Integer, ByRef encryptor As Security.Cryptography.ICryptoTransform)
+   Private Shared Sub ConstructS(ByRef s As Byte(), ByRef r As Byte(), ByVal blockCount As Integer, ByRef encryptor As ICryptoTransform)
       Dim xorBlock As Byte() = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
       Dim xorBlockLength As Integer = xorBlock.Length
       Dim sOffset As Integer = xorBlockLength
@@ -199,7 +203,6 @@ Public Class FF1
    ''' <param name="maxPartNumberByteLength">Output: Maximum length of a binary number of one part in bytes</param>
    ''' <param name="feistelRoundOutputLength">Output: Number of bytes for arrays used in Feistel round calculations</param>
    ''' <param name="blockCount">Output: Number of blocks used in Feistel round calculations</param>
-   ''' <param name="aesCipher">Output: AES-CBC-NoPadding cipher</param>
    ''' <param name="encryptor">Output: AES-ECB-NoPadding encryptor with key already set</param>
    ''' <param name="p">Output: Array P as specified in FF1, algorithm 7 and algorithm 8</param>
    ''' <param name="q">Output: Array P as specified in FF1, algorithm 7 and algorithm 8</param>
@@ -211,15 +214,14 @@ Public Class FF1
                                      ByRef tweakLength As Integer,
                                      ByRef leftLength As Integer,
                                      ByRef rightLength As Integer,
-                                     ByRef radixToTheLeftSize As Numerics.BigInteger,
-                                     ByRef radixToTheRightSize As Numerics.BigInteger,
+                                     ByRef radixToTheLeftSize As BigInteger,
+                                     ByRef radixToTheRightSize As BigInteger,
                                      ByRef leftPart As UShort(),
                                      ByRef rightPart As UShort(),
                                      ByRef maxPartNumberByteLength As Integer,
                                      ByRef feistelRoundOutputLength As Integer,
                                      ByRef blockCount As Integer,
-                                     ByRef aesCipher As Security.Cryptography.AesManaged,
-                                     ByRef encryptor As Security.Cryptography.ICryptoTransform,
+                                     ByRef encryptor As ICryptoTransform,
                                      ByRef p As Byte(),
                                      ByRef q As Byte())
       '
@@ -231,8 +233,8 @@ Public Class FF1
       leftLength = sourceLength >> 1
       rightLength = sourceLength - leftLength
 
-      radixToTheLeftSize = New Numerics.BigInteger(radix ^ leftLength)
-      radixToTheRightSize = New Numerics.BigInteger(radix ^ rightLength)
+      radixToTheLeftSize = New BigInteger(radix ^ leftLength)
+      radixToTheRightSize = New BigInteger(radix ^ rightLength)
 
       leftPart = source.NewFromPartWithCheckForRadix(0, leftLength, radix)
       rightPart = source.NewFromPartWithCheckForRadix(leftLength, rightLength, radix)
@@ -249,22 +251,25 @@ Public Class FF1
       q = InitializeQ(tweak, tweakLength, maxPartNumberByteLength)    ' This part of q never changes, so it is computed only once
 
       '
-      ' Initialize the crypto functions
+      ' Initialize the crypto function
       '
 
       '
       ' The use of ECB is mandated in the FPEFF1 standard
       '
 #Disable Warning S5542 ' Encryption algorithms should be used with secure mode and padding scheme
-      aesCipher = New Security.Cryptography.AesManaged With {
-         .Mode = Security.Cryptography.CipherMode.ECB,
+      Dim aesCipher As New AesCng With {
+         .Mode = CipherMode.ECB,
          .BlockSize = 128,
-         .Padding = Security.Cryptography.PaddingMode.None}
+         .Padding = PaddingMode.None}
 #Enable Warning S5542 ' Encryption algorithms should be used with secure mode and padding scheme
 
-      aesCipher.Key = encryptionKey
+      '
+      ' The initialization vector (IV) is not used in ECB mode, so use one with the correct size and all zeroes
+      '
+      Dim allZeroIV As Byte() = New Byte(0 To 15) {}
 
-      encryptor = aesCipher.CreateEncryptor()
+      encryptor = aesCipher.CreateEncryptor(encryptionKey, allZeroIV)
    End Sub
 
    ''' <summary>
@@ -290,12 +295,12 @@ Public Class FF1
                                       ByVal maxPartNumberByteLength As Integer,
                                       ByVal blockCount As Integer,
                                       ByVal feistelRoundOutputLength As Integer,
-                                      ByRef encryptor As Security.Cryptography.ICryptoTransform) As Numerics.BigInteger
+                                      ByRef encryptor As ICryptoTransform) As BigInteger
       ComplementQ(q, roundNumber, part.ToBigIntegerWithRadix(radix), maxPartNumberByteLength)
 
       ConstructS(s, PseudoRandomFunction(encryptor, p.Concatenate(q)), blockCount, encryptor)
 
-      Return New Numerics.BigInteger(s.ReverseWithUnsignedExtension(feistelRoundOutputLength))
+      Return New BigInteger(s.ReverseWithUnsignedExtension(feistelRoundOutputLength))
    End Function
 #End Region
 
@@ -357,8 +362,8 @@ Public Class FF1
       Dim leftLength As Integer
       Dim rightSize As Integer
 
-      Dim radixToTheLeftSize As Numerics.BigInteger
-      Dim radixToTheRightSize As Numerics.BigInteger
+      Dim radixToTheLeftSize As BigInteger
+      Dim radixToTheRightSize As BigInteger
 
       Dim leftPart As UShort()
       Dim rightPart As UShort()
@@ -370,8 +375,7 @@ Public Class FF1
       Dim feistelRoundOutputLength As Integer
       Dim blockCount As Integer
 
-      Dim aesCipher As Security.Cryptography.AesManaged
-      Dim encryptor As Security.Cryptography.ICryptoTransform
+      Dim encryptor As ICryptoTransform
 
       CheckParameters(source, radix, encryptionKey, tweak)
 
@@ -395,7 +399,6 @@ Public Class FF1
                      maxPartNumberByteLength,
                      feistelRoundOutputLength,
                      blockCount,
-                     aesCipher,
                      encryptor,
                      p,
                      q)
@@ -404,11 +407,11 @@ Public Class FF1
 
       Dim s As Byte() = New Byte(0 To (blockCount << 4) - 1) {}
 
-      Dim moduloValue As Numerics.BigInteger
+      Dim moduloValue As BigInteger
 
-      Dim y As Numerics.BigInteger
+      Dim y As BigInteger
 
-      Dim c As Numerics.BigInteger
+      Dim c As BigInteger
 
       Dim newPartSize As Integer
 
@@ -452,8 +455,8 @@ Public Class FF1
       Dim leftLength As Integer
       Dim rightSize As Integer
 
-      Dim radixToTheLeftSize As Numerics.BigInteger
-      Dim radixToTheRightSize As Numerics.BigInteger
+      Dim radixToTheLeftSize As BigInteger
+      Dim radixToTheRightSize As BigInteger
 
       Dim leftPart As UShort()
       Dim rightPart As UShort()
@@ -465,8 +468,7 @@ Public Class FF1
       Dim feistelRoundOutputLength As Integer
       Dim blockCount As Integer
 
-      Dim aesCipher As Security.Cryptography.AesManaged
-      Dim encryptor As Security.Cryptography.ICryptoTransform
+      Dim encryptor As ICryptoTransform
 
 #Disable Warning BC42108 ' Variable is passed by reference before it has been assigned a value (structure variable)
 #Disable Warning BC42030 ' Variable is passed by reference before it has been assigned a value
@@ -485,7 +487,6 @@ Public Class FF1
                      maxPartNumberByteLength,
                      feistelRoundOutputLength,
                      blockCount,
-                     aesCipher,
                      encryptor,
                      p,
                      q)
@@ -494,11 +495,11 @@ Public Class FF1
 
       Dim s As Byte() = New Byte(0 To blockCount * 16 - 1) {}
 
-      Dim moduloValue As Numerics.BigInteger
+      Dim moduloValue As BigInteger
 
-      Dim y As Numerics.BigInteger
+      Dim y As BigInteger
 
-      Dim c As Numerics.BigInteger
+      Dim c As BigInteger
 
       Dim newPartSize As Integer
 
