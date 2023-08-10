@@ -1,8 +1,6 @@
 ﻿Option Strict On
 
-Imports System.Text
 Imports fpeff1
-Imports Microsoft.VisualStudio.TestTools.UnitTesting
 
 <TestClass()> Public Class ExceptionTests
 

@@ -1,5 +1,7 @@
 ﻿'
-' SPDX-FileCopyrightText: 2023 Frank Schwab'
+' SPDX-FileCopyrightText: 2017-2023 DB Systel GmbH
+' SPDX-FileCopyrightText: 2023 Frank Schwab
+
 ' SPDX-License-Identifier: Apache-2.0
 '
 ' Licensed under the Apache License, Version 2.0 (the "License");
