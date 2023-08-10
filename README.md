@@ -1,4 +1,7 @@
 # FPEFF1
+
+Originally, this repository was located in the "dbsystel" organization. With their kind permission, I moved it to my space in August 2023. The [original repository](https://github.com/dbsystel/FPEFF1) will no longer maintained.
+
 Visual Basic .Net class for the format preserving encryption algorithm FF1 as specified in [NIST Special Publication 800-38G (February 2019)](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf "NIST SP 800-38Gr1").
 
 ## Format Preserving Encryption
