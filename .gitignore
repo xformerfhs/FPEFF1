@@ -344,3 +344,7 @@ healthchecksdb
 *.fpr
 /TUPWLib-errors.txt
 /TUPWLib-workbook.pdf
+
+# No obj directories
+/fpeff1/obj
+/fpeff1Test/obj
